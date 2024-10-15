@@ -55,15 +55,7 @@ function max_marine_international_shipping_enhancements_get_admin_screens_to_ass
 	return array(
 		'settings_page_max-marine-international-shipping-enhancements-settings' => array(
 			array(
-				'name'         => 'settings-page',
-				'localization' => array(
-					'REST_URL'    => get_rest_url( null, '' ),
-					'WP_REST_URL' => get_rest_url(),
-					'NONCES'      => array(
-						'REST' => wp_create_nonce( 'wp_rest' ),
-					),
-					'SETTINGS'    => get_option( 'max_marine_international_shipping_enhancements_plugin_settings', array() ),
-				),
+				'name' => 'settings-page',
 			),
 		),
 	);
@@ -156,4 +148,19 @@ function max_marine_international_shipping_enhancements_admin_screen_enqueued_as
  */
 function max_marine_international_shipping_enhancements_admin_screen_has_enqueued_assets( $screen ) {
 	return count( max_marine_international_shipping_enhancements_admin_screen_enqueued_assets( $screen ) );
+}
+
+/**
+ * Get an array of US domestic countries.
+ *
+ * @since  1.0.0
+ * @return string[]
+ */
+function max_marine_international_shipping_enhancements_get_domestic_country_codes() {
+	return array(
+		'US',
+		'AS',
+		'GU',
+		'PR',
+	);
 }

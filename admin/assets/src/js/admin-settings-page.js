@@ -3,7 +3,14 @@ const {
 	createRoot
 } = wp.element
 
+const domReady = wp.domReady
+
 import AdminSettingsPage from './components/AdminSettings/AdminSettingsPage.jsx'
 
-const root = createRoot( document.getElementById( 'max-marine-international-shipping-enhancements-plugin-settings' ) )
-root.render( <AdminSettingsPage /> )
+domReady( () => {
+	const root = createRoot(
+		document.getElementById( 'max-marine-international-shipping-enhancements-plugin-settings' )
+	)
+
+	root.render( <AdminSettingsPage /> )
+} )

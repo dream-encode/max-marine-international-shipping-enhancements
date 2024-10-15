@@ -102,8 +102,11 @@ class Max_Marine_International_Shipping_Enhancements {
 	 * @return void
 	 */
 	private function load_dependencies() {
-		
-		
+		/**
+		 * Abstract logger.
+		 */
+		require_once MAX_MARINE_INTERNATIONAL_SHIPPING_ENHANCEMENTS_PLUGIN_PATH . 'includes/abstracts/abstract-wc-logger.php';
+
 		/**
 		 * Action Scheduler
 		 */
@@ -114,7 +117,6 @@ class Max_Marine_International_Shipping_Enhancements {
 		 */
 		require_once MAX_MARINE_INTERNATIONAL_SHIPPING_ENHANCEMENTS_PLUGIN_PATH . 'includes/upgrade/class-max-marine-international-shipping-enhancements-upgrader.php';
 
-		
 
 		/**
 		 * The class responsible for orchestrating the actions and filters of the
@@ -146,7 +148,6 @@ class Max_Marine_International_Shipping_Enhancements {
 
 		Max_Marine_International_Shipping_Enhancements_Upgrader::init();
 
-		
 
 		$this->loader = new Max_Marine_International_Shipping_Enhancements_Loader();
 	}
@@ -189,6 +190,8 @@ class Max_Marine_International_Shipping_Enhancements {
 		$plugin_admin = new Max_Marine_International_Shipping_Enhancements_Admin();
 
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
+		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
+		$this->loader->add_action( 'admin_menu', $plugin_admin, 'add_menu_pages' );
 	}
 
 	/**
@@ -206,8 +209,12 @@ class Max_Marine_International_Shipping_Enhancements {
 
 		$this->loader->add_action( 'max_marine_international_shipping_enhancements_process_plugin_upgrade', $plugin_public, 'process_plugin_upgrade', 10, 2 );
 
-		
-		$this->loader->add_action( 'example_function', $plugin_public, 'example_function' );
+		$this->loader->add_action( 'init', $plugin_public, 'register_plugin_settings' );
+		$this->loader->add_action( 'woocommerce_checkout_before_terms_and_conditions', $plugin_public, 'woocommerce_checkout_after_order_review' );
+		#$this->loader->add_action( 'woocommerce_review_order_before_submit', $plugin_public, 'woocommerce_checkout_after_order_review' );
+
+		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
+		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
 	}
 
 	/**
@@ -227,7 +234,7 @@ class Max_Marine_International_Shipping_Enhancements {
 	 * @return void
 	 */
 	private function define_cli_commands() {
-		
+
 	}
 
 	/**

@@ -88,7 +88,7 @@ class Max_Marine_International_Shipping_Enhancements_Upgrader {
 	 * @return void
 	 */
 	protected static function run_update_callback_start( $callback ) {
-		mmise_maybe_define_constant( 'MMISE_UPDATING', true );
+		max_marine_international_shipping_enhancements_maybe_define_constant( 'MMISE_UPDATING', true );
 	}
 
 	/**
@@ -130,7 +130,7 @@ class Max_Marine_International_Shipping_Enhancements_Upgrader {
 		// If we made it here nothing is running yet, lets set the transient now.
 		set_transient( 'mmise_installing', 'yes', MINUTE_IN_SECONDS * 10 );
 
-		mmise_maybe_define_constant( 'MMISE_INSTALLING', true );
+		max_marine_international_shipping_enhancements_maybe_define_constant( 'MMISE_INSTALLING', true );
 
 		self::create_tables();
 
