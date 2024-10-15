@@ -58,38 +58,121 @@ class Max_Marine_International_Shipping_Enhancements_Public {
 	}
 
 	/**
-	 * Send the CORS header on REST requests.
-	 *
-	 * @since  1.0.0
-	 * @return void
-	 */
-	public function rest_api_cors() {
-		if ( 'production' === wp_get_environment_type() ) {
-			return;
-		}
-
-		header( 'Access-Control-Allow-Origin: *' );
-	}
-
-	/**
-	 * Initialize rest api instances.
-	 *
-	 * @since  1.0.0
-	 * @return void
-	 */
-	public function rest_init() {
-		$api = new Max_Marine_International_Shipping_Enhancements_Core_API();
-	}
-
-	/**
-	 * Example function.
+	 * Register plugin settings.
 	 *
 	 * @since  1.0.0
 	 * @access public
-	 * @param  string  $param  First function parameter.
-	 * @return string
+	 * @return void
 	 */
-	public function example_function( $param ) {
-		return $param;
+	public function register_plugin_settings() {
+		$default = array(
+			'enabled' => true,
+			'message' => __( 'Example message', 'max-marine-international-shipping-enhancements' ),
+		);
+
+		$schema  = array(
+			'type'       => 'object',
+			'properties' => array(
+				'enabled' => array(
+					'type' => 'boolean',
+				),
+				'message' => array(
+					'type' => 'string',
+				),
+			),
+		);
+
+		register_setting(
+			'options',
+			'max_marine_international_shipping_enhancements_plugin_settings',
+			array(
+				'type'         => 'object',
+				'default'      => $default,
+				'show_in_rest' => array(
+					'schema' => $schema,
+				),
+			)
+		);
+	}
+
+	/**
+	 * Register the stylesheets for the admin area.
+	 *
+	 * @since  1.0.0
+	 * @return void
+	 */
+	public function enqueue_styles() {
+		if ( ! is_checkout() ) {
+			return;
+		}
+
+		// WooCommerce checkout screen.
+		$asset_base_url = MAX_MARINE_INTERNATIONAL_SHIPPING_ENHANCEMENTS_PLUGIN_URL . 'public/';
+
+		$asset_file = include( MAX_MARINE_INTERNATIONAL_SHIPPING_ENHANCEMENTS_PLUGIN_PATH . 'public/assets/dist/js/woocommerce-checkout.min.asset.php' );
+
+		wp_enqueue_style(
+			'max-marine-international-shipping-enhancements-public-woocommerce-checkout-js',
+			$asset_base_url . 'assets/dist/css/woocommerce-checkout.min.css',
+			array(),
+			(string) $asset_file['version'],
+			'all'
+		);
+	}
+
+	/**
+	 * Register the JavaScript for the checkout page.
+	 *
+	 * @since  1.0.0
+	 * @return void
+	 */
+	public function enqueue_scripts() {
+		if ( ! is_checkout() ) {
+			return;
+		}
+
+		// WooCommerce checkout screen.
+		$asset_base_url = MAX_MARINE_INTERNATIONAL_SHIPPING_ENHANCEMENTS_PLUGIN_URL . 'public/';
+
+		$asset_file = include( MAX_MARINE_INTERNATIONAL_SHIPPING_ENHANCEMENTS_PLUGIN_PATH . 'public/assets/dist/js/woocommerce-checkout.min.asset.php' );
+
+		wp_register_script(
+			'max-marine-international-shipping-enhancements-public-woocommerce-checkout-js',
+			$asset_base_url . 'assets/dist/css/woocommerce-checkout.min.css',
+			array( 'jquery' ),
+			(string) $asset_file['version'],
+			true
+		);
+
+		$localization = array(
+			'DOMESTIC_COUNTRY_CODES' => max_marine_international_shipping_enhancements_get_domestic_country_codes(),
+		);
+
+		wp_localize_script( 'max-marine-international-shipping-enhancements-public-woocommerce-checkout-js', 'MMISE', $localization );
+
+		wp_enqueue_script( 'max-marine-international-shipping-enhancements-public-woocommerce-checkout-js' );
+	}
+
+	/**
+	 * Output the markup for the notice, if enabled.
+	 *
+	 * @since  1.0.0
+	 * @access public
+	 * @return void
+	 */
+	public function woocommerce_checkout_after_order_review() {
+		$options = get_option( 'max_marine_international_shipping_enhancements_plugin_settings' );
+
+		if ( ! $options['enabled'] ) {
+			return;
+		}
+
+		$is_domestic_shipping_country = in_array( strtoupper( WC()->customer->get_shipping_country() ), max_marine_international_shipping_enhancements_get_domestic_country_codes(), true );
+
+		printf(
+			'<div id="max-marine-international-shipping-enhancements-notice-container" class="%1$s">%2$s</div>',
+			( $is_domestic_shipping_country ) ? esc_html( 'hidden' ) : '',
+			esc_html( $options['message'] )
+		);
 	}
 }

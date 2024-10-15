@@ -3,68 +3,53 @@ import { __ } from '@wordpress/i18n'
 import {
 	PanelBody,
 	PanelRow,
-	Placeholder,
-	Spinner,
-	Snackbar,
 	Button,
-	SelectControl,
+	ToggleControl,
+	TextareaControl,
 	__experimentalHStack as HStack
 } from '@wordpress/components'
 
 import {
 	Fragment,
 	useState,
-	useEffect,
 } from '@wordpress/element'
 
-const defaultSettingsState = {
-	'log-level': 'off',
-}
+import {
+	useDispatch
+} from '@wordpress/data'
 
-import { apiGetSettings, apiSaveSettings } from '../../utils/api'
-import { LOG_LEVELS } from '../../utils/constants'
-import { capitalizeFirstLetter } from '../../utils/helpers'
+import {
+	store as noticesStore
+} from '@wordpress/notices'
 
-const mappedLogLevels = LOG_LEVELS.map( ( level ) => ( {
-	label: capitalizeFirstLetter( level ),
-	value: level
-} ) )
+import { useSettings } from '../../hooks/useSettings'
+import Notices from '../Notices/Notices'
 
 const AdminSettingsPage = () => {
-	const [ apiLoaded, setAPILoaded ] = useState( false )
 	const [ apiSaving, setAPISaving ] = useState( false )
-	const [ apiSaved, setAPISaved ]   = useState( false )
-	const [ settings, setSettings ]   = useState( defaultSettingsState )
 
-	useEffect( () => {
-		apiGetSettings()
-			.then( ( response ) => {
-				setSettings( response.data )
+    const { createSuccessNotice } = useDispatch( noticesStore )
 
-				setAPILoaded( true )
-			} )
-	}, [] )
+	const {
+        enableInternationalShippingNotice,
+        updateEnableInternationalShippingNotice,
+        internationalShippingNoticeMessage,
+        updateInternationalShippingNoticeMessage,
+		saveSettings,
+    } = useSettings()
 
-	const updateSetting = ( key, value ) => {
-		setSettings( ( previousSettings ) => ( {
-			...previousSettings,
-			[ key ]: value,
-		} ) )
-	}
-
-	const saveSettings = async ( event ) => {
+	const updateSettings = async ( event ) => {
 		event.preventDefault()
 
 		setAPISaving( true )
 
-		apiSaveSettings( settings )
+		saveSettings()
 			.then( () => {
 				setAPISaving( false )
-				setAPISaved( true )
 
-				setTimeout( () => {
-					setAPISaved( false )
-				}, 5000 )
+				createSuccessNotice(
+					__( 'Settings saved.', 'max-marine-international-shipping-enhancements' )
+				)
 			} )
 	}
 
@@ -79,48 +64,44 @@ const AdminSettingsPage = () => {
 			</div>
 
 			<div className="settings-main">
-				{ ! apiLoaded ? (
-					<Placeholder>
-						<Spinner />
-					</Placeholder>
-				) : (
-					<Fragment>
-						{ apiSaved && (
-							<Snackbar>
-								<p>{ __( 'Settings saved!', 'max-marine-international-shipping-enhancements' ) }</p>
-							</Snackbar>
-						) }
+				<Fragment>
+					<Notices />
 
-						<PanelBody title={ __( 'Developer', 'max-marine-international-shipping-enhancements' ) }>
+					<PanelBody title={ __( 'General', 'max-marine-international-shipping-enhancements' ) }>
+						<PanelRow className="field-row">
+							<ToggleControl
+								label={ __( 'Enabled', 'max-marine-international-shipping-enhancements' ) }
+								checked={ enableInternationalShippingNotice }
+								onChange={ updateEnableInternationalShippingNotice }
+							/>
+						</PanelRow>
+						{ enableInternationalShippingNotice ? (
 							<PanelRow className="field-row">
-								<SelectControl
-									label={ __( 'Log Level', 'max-marine-international-shipping-enhancements' ) }
-									value={ settings[ 'log-level' ] || 'off' }
-									options={ mappedLogLevels }
-									onChange={ ( value ) => updateSetting( 'log-level', value ) }
+								<TextareaControl
+									label={ __( 'Message', 'max-marine-international-shipping-enhancements' ) }
+									value={ internationalShippingNoticeMessage }
+									onChange={ updateInternationalShippingNoticeMessage }
 									__nextHasNoMarginBottom
 								/>
 							</PanelRow>
-						</PanelBody>
-						<PanelBody title={ __( 'Processing' ) }>
-							<HStack
-								alignment="center"
-							>
-								<Button
-									variant="primary"
-									isBusy={ apiSaving }
-									isLarge
-									target="_blank"
-									href="#"
-									onClick={ saveSettings }
-								>
-									{ __( 'Save', 'max-marine-international-shipping-enhancements' ) }
-								</Button>
-							</HStack>
-						</PanelBody>
+						) : null }
+					</PanelBody>
+					<HStack
+						alignment="center"
+					>
+						<Button
+							variant="primary"
+							isBusy={ apiSaving }
+							isLarge
+							target="_blank"
+							href="#"
+							onClick={ updateSettings }
+						>
+							{ __( 'Save', 'max-marine-international-shipping-enhancements' ) }
+						</Button>
+					</HStack>
 
-					</Fragment>
-				) }
+				</Fragment>
 			</div>
 		</Fragment>
 	)

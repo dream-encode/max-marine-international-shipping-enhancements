@@ -58,7 +58,7 @@ class Max_Marine_International_Shipping_Enhancements_Admin {
 				wp_enqueue_style(
 					"max-marine-international-shipping-enhancements-admin-{$asset['name']}",
 					$asset_base_url . "assets/dist/css/admin-{$asset['name']}.min.css",
-					$asset_file['dependencies'],
+					max_marine_international_shipping_enhancements_get_style_asset_dependencies( $asset_file['dependencies'] ),
 					$asset_file['version'],
 					'all'
 				);
@@ -115,7 +115,7 @@ class Max_Marine_International_Shipping_Enhancements_Admin {
 			}
 		}
 	}
-	
+
 	/**
 	 * Adds menu pages.
 	 *
@@ -123,10 +123,9 @@ class Max_Marine_International_Shipping_Enhancements_Admin {
 	 * @return void
 	 */
 	public function add_menu_pages() {
-		add_submenu_page(
-			'options-general.php',
-			__( 'Max Marine - International Shipping Enhancements', 'max-marine-international-shipping-enhancements' ),
-			__( 'Max Marine - International Shipping Enhancements', 'max-marine-international-shipping-enhancements' ),
+		add_options_page(
+			__( 'International Shipping Enhancements', 'max-marine-international-shipping-enhancements' ),
+			__( 'International Shipping Enhancements', 'max-marine-international-shipping-enhancements' ),
 			'manage_options',
 			'max-marine-international-shipping-enhancements-settings',
 			array( $this, 'admin_settings_menu_callback' )
