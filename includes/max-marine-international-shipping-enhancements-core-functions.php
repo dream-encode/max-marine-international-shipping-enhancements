@@ -162,5 +162,7 @@ function max_marine_international_shipping_enhancements_get_domestic_country_cod
 		'AS',
 		'GU',
 		'PR',
+		'UM',
+		'VI',
 	);
 }

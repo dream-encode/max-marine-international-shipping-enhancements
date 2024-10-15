@@ -11,8 +11,6 @@
 
 namespace Max_Marine\International_Shipping_Enhancements\Core;
 
-use Max_Marine\International_Shipping_Enhancements\Core\Upgrade\Max_Marine_International_Shipping_Enhancements_Upgrader;
-
 /**
  * Fired during plugin activation.
  *
@@ -33,6 +31,5 @@ class Max_Marine_International_Shipping_Enhancements_Activator {
 	 * @return void
 	 */
 	public static function activate() {
-		Max_Marine_International_Shipping_Enhancements_Upgrader::install();
 	}
 }

@@ -6,6 +6,8 @@ import {
 	Button,
 	ToggleControl,
 	TextareaControl,
+	Placeholder,
+	Spinner,
 	__experimentalHStack as HStack
 } from '@wordpress/components'
 
@@ -31,6 +33,7 @@ const AdminSettingsPage = () => {
     const { createSuccessNotice } = useDispatch( noticesStore )
 
 	const {
+		settingsLoaded,
         enableInternationalShippingNotice,
         updateEnableInternationalShippingNotice,
         internationalShippingNoticeMessage,
@@ -64,44 +67,50 @@ const AdminSettingsPage = () => {
 			</div>
 
 			<div className="settings-main">
-				<Fragment>
-					<Notices />
+				{ ! settingsLoaded ? (
+					<Placeholder>
+						<Spinner />
+					</Placeholder>
+				) : (
+					<Fragment>
+						<Notices />
 
-					<PanelBody title={ __( 'General', 'max-marine-international-shipping-enhancements' ) }>
-						<PanelRow className="field-row">
-							<ToggleControl
-								label={ __( 'Enabled', 'max-marine-international-shipping-enhancements' ) }
-								checked={ enableInternationalShippingNotice }
-								onChange={ updateEnableInternationalShippingNotice }
-							/>
-						</PanelRow>
-						{ enableInternationalShippingNotice ? (
+						<PanelBody title={ __( 'General', 'max-marine-international-shipping-enhancements' ) }>
 							<PanelRow className="field-row">
-								<TextareaControl
-									label={ __( 'Message', 'max-marine-international-shipping-enhancements' ) }
-									value={ internationalShippingNoticeMessage }
-									onChange={ updateInternationalShippingNoticeMessage }
-									__nextHasNoMarginBottom
+								<ToggleControl
+									label={ __( 'Enabled', 'max-marine-international-shipping-enhancements' ) }
+									checked={ enableInternationalShippingNotice }
+									onChange={ updateEnableInternationalShippingNotice }
 								/>
 							</PanelRow>
-						) : null }
-					</PanelBody>
-					<HStack
-						alignment="center"
-					>
-						<Button
-							variant="primary"
-							isBusy={ apiSaving }
-							isLarge
-							target="_blank"
-							href="#"
-							onClick={ updateSettings }
+							{ enableInternationalShippingNotice ? (
+								<PanelRow className="field-row">
+									<TextareaControl
+										label={ __( 'Message', 'max-marine-international-shipping-enhancements' ) }
+										value={ internationalShippingNoticeMessage }
+										onChange={ updateInternationalShippingNoticeMessage }
+										__nextHasNoMarginBottom
+									/>
+								</PanelRow>
+							) : null }
+						</PanelBody>
+						<HStack
+							alignment="center"
 						>
-							{ __( 'Save', 'max-marine-international-shipping-enhancements' ) }
-						</Button>
-					</HStack>
+							<Button
+								variant="primary"
+								isBusy={ apiSaving }
+								isLarge
+								target="_blank"
+								href="#"
+								onClick={ updateSettings }
+							>
+								{ __( 'Save', 'max-marine-international-shipping-enhancements' ) }
+							</Button>
+						</HStack>
 
-				</Fragment>
+					</Fragment>
+				) }
 			</div>
 		</Fragment>
 	)
