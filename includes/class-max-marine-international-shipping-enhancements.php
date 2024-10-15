@@ -18,7 +18,6 @@ use Max_Marine\International_Shipping_Enhancements\Core\Max_Marine_International
 use Max_Marine\International_Shipping_Enhancements\Core\Max_Marine_International_Shipping_Enhancements_I18n;
 use Max_Marine\International_Shipping_Enhancements\Admin\Max_Marine_International_Shipping_Enhancements_Admin;
 use Max_Marine\International_Shipping_Enhancements\Frontend\Max_Marine_International_Shipping_Enhancements_Public;
-use Max_Marine\International_Shipping_Enhancements\Core\Upgrade\Max_Marine_International_Shipping_Enhancements_Upgrader;
 
 /**
  * The core plugin class.
@@ -76,12 +75,9 @@ class Max_Marine_International_Shipping_Enhancements {
 		$this->plugin_name = 'max-marine-international-shipping-enhancements';
 
 		$this->load_dependencies();
-		$this->define_tables();
 		$this->set_locale();
 		$this->define_admin_hooks();
 		$this->define_public_hooks();
-		$this->define_global_hooks();
-		$this->define_cli_commands();
 	}
 
 	/**
@@ -103,22 +99,6 @@ class Max_Marine_International_Shipping_Enhancements {
 	 */
 	private function load_dependencies() {
 		/**
-		 * Abstract logger.
-		 */
-		require_once MAX_MARINE_INTERNATIONAL_SHIPPING_ENHANCEMENTS_PLUGIN_PATH . 'includes/abstracts/abstract-wc-logger.php';
-
-		/**
-		 * Action Scheduler
-		 */
-		require_once MAX_MARINE_INTERNATIONAL_SHIPPING_ENHANCEMENTS_PLUGIN_PATH . 'libraries/action-scheduler/action-scheduler.php';
-
-		/**
-		 * Upgrader.
-		 */
-		require_once MAX_MARINE_INTERNATIONAL_SHIPPING_ENHANCEMENTS_PLUGIN_PATH . 'includes/upgrade/class-max-marine-international-shipping-enhancements-upgrader.php';
-
-
-		/**
 		 * The class responsible for orchestrating the actions and filters of the
 		 * core plugin.
 		 */
@@ -131,11 +111,6 @@ class Max_Marine_International_Shipping_Enhancements {
 		require_once MAX_MARINE_INTERNATIONAL_SHIPPING_ENHANCEMENTS_PLUGIN_PATH . 'includes/class-max-marine-international-shipping-enhancements-i18n.php';
 
 		/**
-		 * Default filters.
-		 */
-		require_once MAX_MARINE_INTERNATIONAL_SHIPPING_ENHANCEMENTS_PLUGIN_PATH . 'includes/max-marine-international-shipping-enhancements-default-filters.php';
-
-		/**
 		 * The class responsible for defining all actions that occur in the admin area.
 		 */
 		require_once MAX_MARINE_INTERNATIONAL_SHIPPING_ENHANCEMENTS_PLUGIN_PATH . 'admin/class-max-marine-international-shipping-enhancements-admin.php';
@@ -145,9 +120,6 @@ class Max_Marine_International_Shipping_Enhancements {
 		 * side of the site.
 		 */
 		require_once MAX_MARINE_INTERNATIONAL_SHIPPING_ENHANCEMENTS_PLUGIN_PATH . 'public/class-max-marine-international-shipping-enhancements-public.php';
-
-		Max_Marine_International_Shipping_Enhancements_Upgrader::init();
-
 
 		$this->loader = new Max_Marine_International_Shipping_Enhancements_Loader();
 	}
@@ -166,16 +138,6 @@ class Max_Marine_International_Shipping_Enhancements {
 		$plugin_i18n = new Max_Marine_International_Shipping_Enhancements_I18n();
 
 		$this->loader->add_action( 'plugins_loaded', $plugin_i18n, 'load_plugin_textdomain' );
-	}
-
-	/**
-	 * Define custom databases tables.
-	 *
-	 * @since  1.0.0
-	 * @return void
-	 */
-	public function define_tables() {
-		Max_Marine_International_Shipping_Enhancements_Upgrader::define_tables();
 	}
 
 	/**
@@ -205,36 +167,11 @@ class Max_Marine_International_Shipping_Enhancements {
 	private function define_public_hooks() {
 		$plugin_public = new Max_Marine_International_Shipping_Enhancements_Public();
 
-		$this->loader->add_action( 'upgrader_process_complete', $plugin_public, 'upgrader_process_complete', 10, 2 );
-
-		$this->loader->add_action( 'max_marine_international_shipping_enhancements_process_plugin_upgrade', $plugin_public, 'process_plugin_upgrade', 10, 2 );
-
 		$this->loader->add_action( 'init', $plugin_public, 'register_plugin_settings' );
 		$this->loader->add_action( 'woocommerce_checkout_before_terms_and_conditions', $plugin_public, 'woocommerce_checkout_after_order_review' );
-		#$this->loader->add_action( 'woocommerce_review_order_before_submit', $plugin_public, 'woocommerce_checkout_after_order_review' );
 
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
-	}
-
-	/**
-	 * Register all of the global hooks .
-	 *
-	 * @since  1.0.0
-	 * @access private
-	 * @return void
-	 */
-	private function define_global_hooks() {
-	}
-
-	/**
-	 * Register custom WP_Cli commands.
-	 *
-	 * @since  1.0.0
-	 * @return void
-	 */
-	private function define_cli_commands() {
-
 	}
 
 	/**
