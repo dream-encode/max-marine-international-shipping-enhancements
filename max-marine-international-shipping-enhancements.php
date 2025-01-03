@@ -15,7 +15,7 @@
  * Plugin Name:       Max Marine - International Shipping Enhancements
  * Plugin URI:        https://example.com
  * Description:       A custom plugin that customizes international shipping options for customers.
- * Version:           1.0.0
+ * Version:           1.0.1
  * Author:            David Baumwald
  * Author URI:        https://dream-encode.com
  * License:           GPL-2.0+
